@@ -106,6 +106,13 @@ class WPCF7_Mail {
 				if ( false !== strpos( $template, "[${name}]" )
 				&& ! empty( $path ) ) {
 					$attachments[] = $path;
+				} elseif( false !== strrpos($template, "+") ) {					
+					//multiplefiles  -- $template = [files+]
+					$raw_template = str_replace(array("[", "]", "+"), "", $template);
+					if( preg_match("/^$raw_template(_\d+)$/i", $name) 
+					&& ! empty( $path ) ) {
+						$attachments[] = $path;
+					}
 				}
 			}
 		}
