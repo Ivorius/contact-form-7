@@ -106,15 +106,23 @@ class WPCF7_Mail {
 				if ( false !== strpos( $template, "[${name}]" )
 				&& ! empty( $path ) ) {
 					$attachments[] = $path;
-				} elseif( false !== strrpos($template, "+") ) {					
-					//multiplefiles  -- $template = [files+]
-					$raw_template = str_replace(array("[", "]", "+"), "", $template);
-					if( preg_match("/^$raw_template(_\d+)$/i", $name) 
-					&& ! empty( $path ) ) {
-						$attachments[] = $path;
-					}
-				}
+				} 
 			}
+      
+      /* multiplefiles -- $template = [filesname+] */
+    	foreach ( explode( "\n", $template ) as $line ) {
+        if( false !== strrpos($line, "+") ) {		
+  					$raw_template = str_replace(array("[", "]", "+"), "", $line);
+  					
+            foreach ( (array) $uploaded_files as $name => $path ) {
+              if( preg_match("/^$raw_template(_\d+)$/i", $name) 
+    					&& ! empty( $path ) ) {
+    						$attachments[] = $path;
+    					}
+            }                
+  			}
+      }
+      
 		}
 
 		foreach ( explode( "\n", $template ) as $line ) {
